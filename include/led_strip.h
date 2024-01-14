@@ -19,6 +19,26 @@ extern "C"
 {
 #endif
 
+  /// RGB color representation
+  typedef struct
+  {
+    union
+    {
+      uint8_t r;
+      uint8_t red;
+    };
+    union
+    {
+      uint8_t g;
+      uint8_t green;
+    };
+    union
+    {
+      uint8_t b;
+      uint8_t blue;
+    };
+  } rgb_t;
+
   /**
    * @brief Set RGB for a specific pixel
    *
@@ -117,6 +137,8 @@ extern "C"
    *      - ESP_FAIL: Free resources failed because error occurred
    */
   esp_err_t led_strip_set_brightness(led_strip_handle_t strip, uint8_t brightness);
+
+  esp_err_t led_strip_fill(led_strip_handle_t strip, size_t start, size_t len, rgb_t color);
 
 #ifdef __cplusplus
 }

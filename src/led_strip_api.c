@@ -100,3 +100,10 @@ esp_err_t led_strip_set_brightness(led_strip_handle_t strip, uint8_t brightness)
     ESP_RETURN_ON_FALSE(strip->set_brightness, ESP_ERR_NOT_SUPPORTED, TAG, "brightness control not supported");
     return strip->set_brightness(strip, brightness);
 }
+
+esp_err_t led_strip_fill(led_strip_handle_t strip, size_t start, size_t len, rgb_t color)
+{
+    ESP_RETURN_ON_FALSE(strip, ESP_ERR_INVALID_ARG, TAG, "invalid argument");
+    ESP_RETURN_ON_FALSE(strip->fill, ESP_ERR_NOT_SUPPORTED, TAG, "fill control not supported");
+    return strip->fill(strip, start, len, color.r, color.g, color.b);
+}

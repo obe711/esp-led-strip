@@ -35,7 +35,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t scale8_video(uint8_t i, fract8 scale)
 
 static uint32_t scale_color(uint8_t color, uint8_t brightness)
 {
-    return scale8_video(color, 255 - brightness);
+    return scale8_video(color, brightness);
 }
 
 typedef struct
@@ -122,6 +122,26 @@ static esp_err_t led_strip_rmt_set_brightness(led_strip_t *strip, uint32_t brigh
     return ESP_OK;
 }
 
+static esp_err_t led_strip_rmt_fill(led_strip_t *strip, uint8_t start, uint8_t len, uint32_t red, uint32_t green, uint32_t blue)
+{
+    led_strip_rmt_obj *rmt_strip = __containerof(strip, led_strip_rmt_obj, base);
+    ESP_RETURN_ON_FALSE(start + len <= rmt_strip->strip_len, ESP_ERR_INVALID_ARG, TAG, "index out of maximum number of LEDs");
+    uint32_t start_byte = start * rmt_strip->bytes_per_pixel;
+    uint32_t end_byte = (start + len) * rmt_strip->bytes_per_pixel;
+    for (uint32_t i = start_byte; i < end_byte; i += rmt_strip->bytes_per_pixel)
+    {
+        /// ESP_LOGI("led_strip_rmt_fill", "color: %d, brightness: %d", (uint8_t)(scale_color(green & 0xFF, rmt_strip->brightness - 1) & 0xFF), rmt_strip->brightness);
+        rmt_strip->pixel_buf[i + 0] = scale_color(green & 0xFF, rmt_strip->brightness);
+        rmt_strip->pixel_buf[i + 1] = scale_color(red & 0xFF, rmt_strip->brightness);
+        rmt_strip->pixel_buf[i + 2] = scale_color(blue & 0xFF, rmt_strip->brightness);
+        if (rmt_strip->bytes_per_pixel > 3)
+        {
+            rmt_strip->pixel_buf[i + 3] = 0;
+        }
+    }
+    return ESP_OK;
+}
+
 esp_err_t led_strip_new_rmt_device(const led_strip_config_t *led_config, const led_strip_rmt_config_t *rmt_config, led_strip_handle_t *ret_strip)
 {
     led_strip_rmt_obj *rmt_strip = NULL;
@@ -182,6 +202,7 @@ esp_err_t led_strip_new_rmt_device(const led_strip_config_t *led_config, const l
     rmt_strip->base.del = led_strip_rmt_del;
     rmt_strip->base.set_brightness = led_strip_rmt_set_brightness;
     rmt_strip->brightness = 255;
+    rmt_strip->base.fill = led_strip_rmt_fill;
 
     *ret_strip = &rmt_strip->base;
     return ESP_OK;

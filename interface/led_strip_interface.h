@@ -101,6 +101,17 @@ extern "C"
          *      - ESP_FAIL: Free resources failed because error occurred
          */
         esp_err_t (*set_brightness)(led_strip_t *strip, uint32_t brightness);
+
+        /**
+         * @brief Fill strip
+         *
+         * @param strip: LED strip
+         *
+         * @return
+         *      - ESP_OK: Free resources successfully
+         *      - ESP_FAIL: Free resources failed because error occurred
+         */
+        esp_err_t (*fill)(led_strip_t *strip, uint8_t start, uint8_t len, uint32_t red, uint32_t green, uint32_t blue);
     };
 
 #ifdef __cplusplus
