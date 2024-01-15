@@ -1,6 +1,6 @@
-# LED Strip Driver
+# LED Strip Driver - with Brightness Control - ESP-IDF 4 & 5
 
-[![Component Registry](https://components.espressif.com/components/espressif/led_strip/badge.svg)](https://components.espressif.com/components/espressif/led_strip)
+
 
 This driver is designed for addressable LEDs like [WS2812](http://www.world-semi.com/Certifications/WS2812B.html), where each LED is controlled by a single data line.
 
