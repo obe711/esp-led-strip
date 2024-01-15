@@ -19,6 +19,8 @@ extern "C"
 {
 #endif
 
+#define LIB8STATIC_ALWAYS_INLINE __attribute__((always_inline)) static inline
+
   /// RGB color representation
   typedef struct
   {
@@ -38,6 +40,23 @@ extern "C"
       uint8_t blue;
     };
   } rgb_t;
+
+  typedef uint8_t fract8; ///< ANSI: unsigned short _Fract
+
+  LIB8STATIC_ALWAYS_INLINE uint8_t scale8_video(uint8_t i, fract8 scale)
+  {
+    return (((int)i * (int)scale) >> 8) + ((i && scale) ? 1 : 0);
+  }
+
+  static inline rgb_t rgb_scale_video(rgb_t a, uint8_t scaledown)
+  {
+    rgb_t res = {
+        .r = scale8_video(a.r, scaledown),
+        .g = scale8_video(a.g, scaledown),
+        .b = scale8_video(a.b, scaledown),
+    };
+    return res;
+  }
 
   /**
    * @brief Set RGB for a specific pixel

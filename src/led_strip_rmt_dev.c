@@ -24,15 +24,6 @@
 
 static const char *TAG = "led_strip_rmt";
 
-typedef uint8_t fract8; ///< ANSI: unsigned short _Fract
-
-#define LIB8STATIC_ALWAYS_INLINE __attribute__((always_inline)) static inline
-
-LIB8STATIC_ALWAYS_INLINE uint8_t scale8_video(uint8_t i, fract8 scale)
-{
-    return (((int)i * (int)scale) >> 8) + ((i && scale) ? 1 : 0);
-}
-
 static uint32_t scale_color(uint8_t color, uint8_t brightness)
 {
     return scale8_video(color, brightness);
