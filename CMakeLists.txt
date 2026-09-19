@@ -2,6 +2,13 @@ include($ENV{IDF_PATH}/tools/cmake/version.cmake)
 
 set(srcs "src/led_strip_api.c")
 
+# RMT/SPI drivers moved out of the legacy "driver" component in newer IDFs
+if("${IDF_VERSION_MAJOR}.${IDF_VERSION_MINOR}" VERSION_GREATER_EQUAL "5.3")
+    set(reqs "esp_driver_rmt" "esp_driver_spi")
+else()
+    set(reqs "driver")
+endif()
+
 if("${IDF_VERSION_MAJOR}.${IDF_VERSION_MINOR}" VERSION_GREATER_EQUAL "5.0")
     if(CONFIG_SOC_RMT_SUPPORTED)
         list(APPEND srcs "src/led_strip_rmt_dev.c" "src/led_strip_rmt_encoder.c")
@@ -19,4 +26,4 @@ endif()
 
 idf_component_register(SRCS ${srcs}
                        INCLUDE_DIRS "include" "interface"
-                       REQUIRES "driver")
+                       REQUIRES ${reqs})
